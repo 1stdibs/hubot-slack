@@ -130,6 +130,7 @@ class SlackBot extends Adapter
 
       when 'message', 'bot_message'
         @robot.logger.debug "Received message: '#{text}' in channel: #{channel.name}, from: #{user.name}"
+	@robot.logger.info "Received message: '#{text}' in channel: #{channel.name}, from: #{user.name}"
         @receive new TextMessage(user, text, message.ts)
 
       when 'channel_join', 'group_join'
@@ -144,9 +145,10 @@ class SlackBot extends Adapter
         @robot.logger.debug "#{user.name} set the topic in #{channel.name} to #{topic}"
         @receive new TopicMessage user, message.topic, message.ts
 
-      else        
+      else
         @robot.logger.debug "Received message: '#{text}' in channel: #{channel.name}, subtype: #{subtype}"
-        message.user = user
+	@robot.logger.info "Received message: '#{text}' in channel: #{channel.name}, subtype: #{subtype}"
+	message.user = if subtype == 'bot_message' then 'bot' else user
         @receive new CatchAllMessage(message)
 
 
